@@ -122,12 +122,12 @@ class BangChamCong(models.Model):
                 continue
 
             # Convert to datetime in user's timezone
-            naive_vao = datetime.combine(record.ngay_cham_cong, gio_vao)
-            naive_ra = datetime.combine(record.ngay_cham_cong, gio_ra)
+            thoi_gian_vao = datetime.combine(record.ngay_cham_cong, gio_vao)
+            thoi_gian_ra = datetime.combine(record.ngay_cham_cong, gio_ra)
             
             # Store in UTC
-            record.gio_vao_ca = tz.localize(naive_vao).astimezone(UTC).replace(tzinfo=None)
-            record.gio_ra_ca = tz.localize(naive_ra).astimezone(UTC).replace(tzinfo=None)
+            record.gio_vao_ca = tz.localize(thoi_gian_vao).astimezone(UTC).replace(tzinfo=None)
+            record.gio_ra_ca = tz.localize(thoi_gian_ra).astimezone(UTC).replace(tzinfo=None)
 
     gio_vao = fields.Datetime("Giờ vào thực tế")
     gio_ra = fields.Datetime("Giờ ra thực tế")
@@ -154,9 +154,6 @@ class BangChamCong(models.Model):
             if record.don_tu_id and record.don_tu_id.trang_thai_duyet == 'da_duyet':
                 if record.loai_don == 'di_muon':
                     record.phut_di_muon = max(0, record.phut_di_muon_goc - record.thoi_gian_xin)
-                elif record.loai_don == 'di_muon_ve_som':
-                    thoi_gian_moi_ben = record.thoi_gian_xin / 2
-                    record.phut_di_muon = max(0, record.phut_di_muon_goc - thoi_gian_moi_ben)
 
     # Tính toán về sớm
     phut_ve_som_goc = fields.Float("Số phút về sớm gốc", compute="_compute_phut_ve_som_goc", store=True)
@@ -180,9 +177,7 @@ class BangChamCong(models.Model):
             if record.don_tu_id and record.don_tu_id.trang_thai_duyet == 'da_duyet':
                 if record.loai_don == 've_som':
                     record.phut_ve_som = max(0, record.phut_ve_som_goc - record.thoi_gian_xin)
-                elif record.loai_don == 'di_muon_ve_som':
-                    thoi_gian_moi_ben = record.thoi_gian_xin / 2
-                    record.phut_ve_som = max(0, record.phut_ve_som_goc - thoi_gian_moi_ben)
+                
 
     # Trạng thái chấm công
     trang_thai = fields.Selection([
